@@ -1,19 +1,24 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { toggle, delTodo } from '../redux/todos/todosSlice';
+import {
+  toggle,
+  delTodo,
+  selectFilteredTodos,
+} from '../redux/todos/todosSlice';
 
 function TodoList() {
   const dispatch = useDispatch();
-  const items = useSelector((state) => state.todos.items);
+  const filteredTodos = useSelector(selectFilteredTodos);
 
   const handledelTodo = (id) => {
     if (window.confirm('Are you sure')) {
       dispatch(delTodo(id));
     }
   };
+
   return (
     <ul className="todo-list">
-      {items.map((item) => (
+      {filteredTodos.map((item) => (
         <li key={item.id} className={item.completed ? 'completed' : ''}>
           <div className="view">
             <input

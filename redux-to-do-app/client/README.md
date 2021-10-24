@@ -1,3 +1,4 @@
+### A react-redux todo app that makes requests via API using thunk
 ![image](https://user-images.githubusercontent.com/67521243/138603899-6ee65ac2-1e14-4fca-a87f-c03a36e78701.png)
 
 

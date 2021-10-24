@@ -1,42 +1,11 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { createSlice } from '@reduxjs/toolkit';
 
-export const getTodoAsync = createAsyncThunk('todos/getTodoAsync', async () => {
-  const res = await axios(`${process.env.REACT_APP_API_BASE_ENDPOINT}/todos`);
-  return res.data;
-});
-
-export const addTodoAsync = createAsyncThunk(
-  'todos/addTodoAsync',
-  async (data) => {
-    const res = await axios.post(
-      `${process.env.REACT_APP_API_BASE_ENDPOINT}/todos`,
-      data
-    );
-    return res.data;
-  }
-);
-
-export const toggleTodoAsync = createAsyncThunk(
-  'todos/addTodoAsync',
-  async ({ id, data }) => {
-    const res = await axios.patch(
-      `${process.env.REACT_APP_API_BASE_ENDPOINT}/todos/${id}`,
-      data
-    );
-    return res.data;
-  }
-);
-
-export const removeTodoAsync = createAsyncThunk(
-  'todos/addTodoAsync',
-  async (id) => {
-    await axios.delete(
-      `${process.env.REACT_APP_API_BASE_ENDPOINT}/todos/${id}`
-    );
-    return id;
-  }
-);
+import {
+  getTodoAsync,
+  addTodoAsync,
+  toggleTodoAsync,
+  removeTodoAsync,
+} from './services';
 
 export const todosSlice = createSlice({
   name: 'todos',
@@ -44,7 +13,7 @@ export const todosSlice = createSlice({
     items: [],
     isLoading: false,
     error: null,
-    activeFilter: 'all',
+    activeFilter: localStorage.getItem('activeFilter'),
     addNewTodo: {
       isLoading: false,
       error: null,
@@ -82,8 +51,8 @@ export const todosSlice = createSlice({
       state.addNewTodo.isLoading = false;
     },
     [addTodoAsync.rejected]: (state, action) => {
-      state.addNewTodo.error = false;
-      state.error = action.error.message;
+      state.addNewTodo.isLoading = false;
+      state.addNewTodo.error = action.error.message;
     },
 
     // toggle todo
@@ -96,8 +65,8 @@ export const todosSlice = createSlice({
     // remove todo
     [removeTodoAsync.fulfilled]: (state, action) => {
       const id = action.payload;
-      const index = state.items.findIndex((item) => item.id === id);
-      state.items.splice(index, 1);
+      const filtered = state.items.filter((item) => item.id !== id);
+      state.items = filtered;
     },
   },
 });
